@@ -1,1 +1,35 @@
-/* You can add global styles to this file, and also import other style files */
+@import url("https://fonts.googleapis.com/css?family=Roboto&display=swap");
+
+html {
+    font-size: 62.5%;
+
+    @media (min-width: 400px) {
+        font-size: 67.5%;
+    }
+
+    @media (min-width: 768px) {
+        font-size: 72.5%;
+    }
+}
+
+body {
+    margin: 0 auto;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+    font-size: 1.6rem;
+
+    min-height: 100vh;
+    //max-width: 1020px;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+button {
+    cursor: pointer;
+}
+
+a {
+    text-decoration: none;
+}

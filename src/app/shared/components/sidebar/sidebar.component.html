@@ -1,0 +1,37 @@
+<nav class="sidebar" [class.toggle-sidebar]="sidebarToggled">
+    <button (click)="toggleSidebar()">
+        <fa-icon
+            [icon]="sidebarToggled ? icons.closeSidebar : icons.openSidebar"
+            [fixedWidth]="true"
+        ></fa-icon>
+    </button>
+    <a routerLink="/dashboard">
+        <fa-icon [icon]="icons.dashboard" [fixedWidth]="true"></fa-icon>
+        <span>Dashboard</span>
+    </a>
+    <a>
+        <fa-icon [icon]="icons.employees" [fixedWidth]="true"></fa-icon>
+        <span>Employees</span>
+
+        <button (click)="toggleMenu(1)">
+            <fa-icon
+                [icon]="menuToggled[1] ? icons.closeMenu : icons.openMenu"
+                [fixedWidth]="true"
+            ></fa-icon>
+        </button>
+    </a>
+    <div class="submenu" [class.toggle-submenu]="menuToggled[1]">
+        <a routerLink="/employees/add">
+            <fa-icon [icon]="icons.addEmployee" [fixedWidth]="true"></fa-icon>
+            <span>Add New</span>
+        </a>
+        <a routerLink="/employees/1">
+            <fa-icon [icon]="icons.employee" [fixedWidth]="true"></fa-icon>
+            <span>1. Fantamo</span>
+        </a>
+        <a routerLink="/employees/2">
+            <fa-icon [icon]="icons.employee" [fixedWidth]="true"></fa-icon>
+            <span>2. Fantamão</span>
+        </a>
+    </div>
+</nav>

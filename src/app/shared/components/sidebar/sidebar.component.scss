@@ -1,0 +1,77 @@
+.sidebar {
+    display: flex;
+    flex-direction: column;
+
+    width: 20rem;
+    transition: width 0.5s;
+    height: 100%;
+    background: #7159c1;
+    padding: 1rem;
+
+    > button {
+        padding: 1rem 0.25rem;
+        font-size: 2rem;
+        align-self: flex-end;
+        background: none;
+        border: none;
+        color: #ffffff;
+    }
+
+    a {
+        color: #ffffff;
+        font-size: 1.8rem;
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+        padding-left: 0.5rem;
+        width: 100%;
+
+        display: flex;
+
+        &:hover {
+            background: #654fac;
+        }
+
+        fa-icon {
+            padding: 0 1rem;
+        }
+
+        span + button {
+            padding: 0;
+            margin-left: 2rem;
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.8rem;
+
+            &:hover {
+                background: #7159c1;
+            }
+        }
+    }
+}
+
+.toggle-sidebar {
+    width: 3rem;
+    transition: width 0.5s;
+
+    a {
+        display: none;
+    }
+}
+
+.submenu {
+    display: flex;
+    flex-direction: column;
+
+    a {
+        font-size: 1.5rem;
+        padding-top: 0.6rem;
+        padding-bottom: 0.6rem;
+        padding-left: 2rem;
+        width: 90%;
+    }
+}
+
+.toggle-submenu {
+    display: none;
+}
