@@ -6,7 +6,7 @@ import { EmployeeFormComponent } from "../shared/components/employee-form/employ
 
 @NgModule({
     declarations: [EmployeeFormComponent],
-    imports: [CommonModule],
-    exports: [ReactiveFormsModule, FormsModule, EmployeeFormComponent]
+    imports: [CommonModule, ReactiveFormsModule, FormsModule],
+    exports: [EmployeeFormComponent]
 })
 export class SharedModule {}

@@ -1,1 +1,138 @@
-<p>employee-form works!</p>
+<form novalidate (ngSubmit)="submitForm()" [formGroup]="employeeForm">
+    <div>
+        <label for="firstName">First Name</label>
+        <input
+            type="text"
+            id="firstName"
+            formControlName="firstName"
+            [class.validation-error]="displayedMessages.firstName"
+        />
+        <div>
+            {{ displayedMessages.firstName }}
+        </div>
+    </div>
+
+    <div>
+        <label for="lastName">Last Name</label>
+        <input
+            type="text"
+            id="lastName"
+            formControlName="lastName"
+            [class.validation-error]="displayedMessages.lastName"
+        />
+        <div>
+            {{ displayedMessages.lastName }}
+        </div>
+    </div>
+
+    <div>
+        <label for="birthday">Birthday</label>
+        <input
+            type="date"
+            id="birthday"
+            formControlName="birthday"
+            [class.validation-error]="displayedMessages.birthday"
+        />
+        <div>
+            {{ displayedMessages.birthday }}
+        </div>
+    </div>
+
+    <div>
+        <label for="male">Gender</label>
+        <label for="male">
+            <input
+                type="radio"
+                id="male"
+                value="male"
+                formControlName="gender"
+                [class.validation-error]="displayedMessages.gender"
+            />
+            Male
+        </label>
+        <label for="female">
+            <input
+                type="radio"
+                id="female"
+                value="female"
+                formControlName="gender"
+                [class.validation-error]="displayedMessages.gender"
+            />Female
+        </label>
+        <label for="other">
+            <input
+                type="radio"
+                id="other"
+                value="other"
+                formControlName="gender"
+                [class.validation-error]="displayedMessages.gender"
+            />Other
+        </label>
+        <div>
+            {{ displayedMessages.birthday }}
+        </div>
+    </div>
+
+    <div>
+        <label for="nationality">Nationality</label>
+        <div
+            formArrayName="nationalityList"
+            *ngFor="let nationality of nationalityList.controls; let i = index"
+        >
+            <div [formGroupName]="i">
+                <select
+                    id="nationality"
+                    formControlName="nationality"
+                    [class.validation-error]="displayedMessages.nationalityList"
+                >
+                    <option value="portugues">portugues</option>
+                    <option value="brasileiro">brasileiro</option>
+                    <option value="ingles">ingles</option>
+                    <option value="africano">africano</option>
+                </select>
+            </div>
+            <button
+                type="button"
+                (click)="handleNationalityAdd()"
+                [disabled]="
+                    !nationalityList.valid || nationalityList.length !== 1
+                "
+                *ngIf="i === 0"
+            >
+                add
+            </button>
+            <button
+                type="button"
+                (click)="handleNationalityDelete()"
+                *ngIf="i === 1"
+            >
+                delete
+            </button>
+        </div>
+
+        <div>
+            {{ displayedMessages.nationalityList }}
+        </div>
+    </div>
+
+    <div>
+        <label for="email">Email</label>
+        <input
+            type="text"
+            id="email"
+            formControlName="email"
+            [class.validation-error]="displayedMessages.email"
+        />
+
+        <div>
+            {{ displayedMessages.email }}
+        </div>
+    </div>
+
+    <button type="submit" [disabled]="employeeForm.invalid">submit</button>
+</form>
+
+<br />Dirty: {{ employeeForm.dirty }} <br />Touched: {{ employeeForm.touched }}
+<br />Valid: {{ employeeForm.valid }} <br />Value:
+{{ employeeForm.value | json }}
+<br />

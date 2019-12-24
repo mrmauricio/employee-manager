@@ -7,7 +7,8 @@ import {
     faToggleOff,
     faToggleOn,
     faCaretDown,
-    faCaretUp
+    faCaretUp,
+    IconDefinition
 } from "@fortawesome/free-solid-svg-icons";
 
 @Component({
@@ -17,10 +18,11 @@ import {
 })
 export class SidebarComponent implements OnInit {
     sidebarToggled: boolean = false;
-    menuToggled: any = {
+    menuToggled: { [key: number]: boolean } = {
         1: false
     };
-    icons: any = {
+
+    icons: { [key: string]: IconDefinition } = {
         dashboard: faChartBar,
         employees: faUsers,
         employee: faUser,
