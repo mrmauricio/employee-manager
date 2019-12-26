@@ -11,18 +11,11 @@ import {
 import { debounceTime } from "rxjs/operators";
 
 import { birthdayValidator } from "../../validators/birthdayValidator";
+import { countryValidator } from "../../validators/countryValidator";
 
 import { Employee } from "./../../../classes/employee";
 
-//function sameValuesValidator(
-//    c: AbstractControl
-//): { [key: string]: boolean } | null {
-//    if (c["controls"].length === 2) {
-//        let values = c["controls"].map(control => control.value.nationality);
-//
-//        console.log(values);
-//    }
-//}
+import { FormService } from "./../../../services/form.service";
 
 @Component({
     selector: "app-employee-form",
@@ -35,6 +28,7 @@ export class EmployeeFormComponent implements OnInit {
     employeeForm: FormGroup;
     employee: Employee;
     controlList: { [key: string]: AbstractControl }[];
+    arrayList: { [key: string]: AbstractControl }[];
 
     get firstName(): AbstractControl {
         return this.employeeForm.get("firstName");
@@ -55,18 +49,23 @@ export class EmployeeFormComponent implements OnInit {
         return this.employeeForm.get("email");
     }
 
-    displayedMessages: { [key: string]: string } = {
+    displayedMessages = {
         firstName: "",
         lastName: "",
         birthday: "",
         gender: "",
-        nationalityList: "",
         email: ""
     };
 
-    validationMessages: { [key: string]: { [key: string]: string } };
+    validationMessages;
 
-    constructor(private fb: FormBuilder) {}
+    countryList = {
+        selectedNationality: "Brazil",
+        keyword: "name",
+        data: []
+    };
+
+    constructor(private fb: FormBuilder, private formService: FormService) {}
 
     ngOnInit() {
         // isso virá do backend
@@ -86,8 +85,9 @@ export class EmployeeFormComponent implements OnInit {
             gender: {
                 required: "Gender is required"
             },
-            nationalityList: {
-                required: "Nationality is required"
+            nationality: {
+                required: "Nationality is required",
+                notExists: "Please select a country of the list"
             },
             email: {
                 required: "Email is required",
@@ -104,12 +104,18 @@ export class EmployeeFormComponent implements OnInit {
             email: ["", [Validators.required, Validators.email]]
         });
 
+        // fetch data from api
+        this.getCountryList();
+
+        /*
+         ** subscribe to each of the formControl's value changes
+         */
+
         this.controlList = [
             { firstName: this.firstName },
             { lastName: this.lastName },
             { birthday: this.birthday },
             { gender: this.gender },
-            { nationalityList: this.nationalityList },
             { email: this.email }
         ];
 
@@ -118,38 +124,25 @@ export class EmployeeFormComponent implements OnInit {
 
             formControl[key].valueChanges
                 .pipe(debounceTime(1000))
-                .subscribe(() => this.setMessage(formControl[key], key));
+                .subscribe(() => this.setMessage(formControl[key], key, null));
         });
 
-        //this.firstName.valueChanges
-        //    .pipe(debounceTime(1000))
-        //    .subscribe(() => this.setMessage(this.firstName, "firstName"));
-        //
-        //this.lastName.valueChanges
-        //    .pipe(debounceTime(1000))
-        //    .subscribe(() => this.setMessage(this.lastName, "lastName"));
-        //
-        //this.birthday.valueChanges
-        //    .pipe(debounceTime(1000))
-        //    .subscribe(() => this.setMessage(this.birthday, "birthday"));
-        //
-        //this.gender.valueChanges
-        //    .pipe(debounceTime(1000))
-        //    .subscribe(() => this.setMessage(this.gender, "gender"));
-        //
-        //this.nationalityList.valueChanges
-        //    .pipe(debounceTime(1000))
-        //    .subscribe(() =>
-        //        this.setMessage(this.nationalityList, "nationalityList")
-        //    );
-        //
-        //this.email.valueChanges
-        //    .pipe(debounceTime(1000))
-        //    .subscribe(() => this.setMessage(this.email, "email"));
+        /*
+         ** subscribe to each of the formArrays's value changes
+         */
+
+        this.arrayList = [
+            {
+                nationality: this.nationalityList.controls[0]["controls"]
+                    .nationality
+            }
+        ];
+
+        this.handleFormArraySubscription(this.arrayList);
     }
 
     buildNationalityList(required: boolean): FormGroup {
-        let validators = [];
+        let validators = [countryValidator.bind(this)];
 
         if (required) {
             validators.push(Validators.required);
@@ -160,8 +153,38 @@ export class EmployeeFormComponent implements OnInit {
         });
     }
 
+    getCountryList() {
+        this.formService.getCountryList().subscribe({
+            next: countryList => (this.countryList.data = countryList),
+            error: err => this.console.log(err)
+        });
+    }
+
+    handleFormArraySubscription(
+        controlList: { [key: string]: AbstractControl }[]
+    ) {
+        controlList.forEach(formControl => {
+            let key = Object.keys(formControl)[0];
+            let num = this.nationalityList.length;
+
+            formControl[key].valueChanges
+                .pipe(debounceTime(1000))
+                .subscribe(() => this.setMessage(formControl[key], key, num));
+        });
+    }
+
     handleNationalityAdd(): void {
         this.nationalityList.push(this.buildNationalityList(false));
+
+        let controlList = [
+            {
+                nationality: this.nationalityList.controls[
+                    this.nationalityList.length - 1
+                ]["controls"].nationality
+            }
+        ];
+
+        this.handleFormArraySubscription(controlList);
     }
 
     handleNationalityDelete(): void {
@@ -176,16 +199,27 @@ export class EmployeeFormComponent implements OnInit {
         return false;
     }
 
-    setMessage(c: AbstractControl, name: string): void {
-        this.displayedMessages[name] = "";
+    setMessage(c: AbstractControl, name: string, id: number | null): void {
+        let controlName: string;
+
+        if (id) {
+            controlName = `${name}${id}`;
+            console.log(controlName);
+        } else {
+            controlName = name;
+        }
+
+        this.displayedMessages[controlName] = "";
+
         if ((c.touched || c.dirty) && c.errors) {
             // pega as chaves do errors do Control e então busca na variavel
             // validationMessages por essa chave, p/ então adicionar a msg
-            this.displayedMessages[name] = Object.keys(c.errors)
+            this.displayedMessages[controlName] = Object.keys(c.errors)
                 .map(key => this.validationMessages[name][key])
                 .join(" ");
         }
-        console.log(this.displayedMessages[name]);
+        //console.log(c);
+        //console.log(this.displayedMessages);
     }
 
     submitForm(): void {

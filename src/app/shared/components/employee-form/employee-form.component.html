@@ -80,16 +80,29 @@
             *ngFor="let nationality of nationalityList.controls; let i = index"
         >
             <div [formGroupName]="i">
-                <select
-                    id="nationality"
-                    formControlName="nationality"
-                    [class.validation-error]="displayedMessages.nationalityList"
-                >
-                    <option value="portugues">portugues</option>
-                    <option value="brasileiro">brasileiro</option>
-                    <option value="ingles">ingles</option>
-                    <option value="africano">africano</option>
-                </select>
+                <div class="ng-autocomplete">
+                    <ng-autocomplete
+                        id="nationality"
+                        formControlName="nationality"
+                        [class.validation-error]="
+                            displayedMessages.nationalityList
+                        "
+                        [isLoading]="countryList.data.length === 0"
+                        [data]="countryList.data"
+                        [searchKeyword]="countryList.keyword"
+                        [itemTemplate]="itemTemplate"
+                        [notFoundTemplate]="notFoundTemplate"
+                    >
+                    </ng-autocomplete>
+
+                    <ng-template #itemTemplate let-item>
+                        <a [innerHTML]="item"></a>
+                    </ng-template>
+
+                    <ng-template #notFoundTemplate let-notFound>
+                        <div [innerHTML]="notFound"></div>
+                    </ng-template>
+                </div>
             </div>
             <button
                 type="button"
@@ -108,10 +121,10 @@
             >
                 delete
             </button>
-        </div>
 
-        <div>
-            {{ displayedMessages.nationalityList }}
+            <div>
+                {{ displayedMessages["nationality" + (i + 1)] }}
+            </div>
         </div>
     </div>
 
