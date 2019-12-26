@@ -129,8 +129,10 @@
                 {{ message }}
             </div>
         </div>
+        <div *ngFor="let message of displayedMessages.nationality">
+            {{ message }}
+        </div>
     </div>
-
     <div>
         <label for="email">Email</label>
         <input

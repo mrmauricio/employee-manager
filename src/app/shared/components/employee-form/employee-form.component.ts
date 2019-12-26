@@ -11,7 +11,10 @@ import {
 import { debounceTime } from "rxjs/operators";
 
 import { birthdayValidator } from "../../validators/birthdayValidator";
-import { countryValidator } from "../../validators/countryValidator";
+import {
+    countryValidator,
+    sameCountryValidator
+} from "../../validators/countryValidator";
 
 import { Employee } from "./../../../classes/employee";
 
@@ -24,11 +27,26 @@ import { FormService } from "./../../../services/form.service";
 })
 export class EmployeeFormComponent implements OnInit {
     console = console;
-
     employeeForm: FormGroup;
     employee: Employee;
+
     controlList: { [key: string]: AbstractControl }[];
     arrayList: { [key: string]: AbstractControl }[];
+
+    validationMessages;
+    displayedMessages = {
+        firstName: [],
+        lastName: [],
+        birthday: [],
+        gender: [],
+        nationality: [],
+        email: []
+    };
+
+    countryList = {
+        keyword: "name",
+        data: []
+    };
 
     get firstName(): AbstractControl {
         return this.employeeForm.get("firstName");
@@ -49,49 +67,34 @@ export class EmployeeFormComponent implements OnInit {
         return this.employeeForm.get("email");
     }
 
-    displayedMessages = {
-        firstName: [],
-        lastName: [],
-        birthday: [],
-        gender: [],
-        email: []
-    };
-
-    validationMessages;
-
-    countryList = {
-        selectedNationality: "Brazil",
-        keyword: "name",
-        data: []
-    };
-
     constructor(private fb: FormBuilder, private formService: FormService) {}
 
     ngOnInit() {
         // isso virá do backend
         this.validationMessages = {
             firstName: {
-                required: "First Name is required",
+                required: "First Name is required.",
                 minlength: "First Name must have at least three characters."
             },
             lastName: {
-                required: "Last Name is required",
+                required: "Last Name is required.",
                 minlength: "Last Name must have at least three characters."
             },
             birthday: {
-                required: "Birthday Date is required",
-                futureDate: "Birthday Date must be in the past"
+                required: "Birthday Date is required.",
+                futureDate: "Birthday Date must be in the past."
             },
             gender: {
-                required: "Gender is required"
+                required: "Gender is required."
             },
             nationality: {
-                required: "Nationality is required",
-                notExists: "Please select a country of the list"
+                required: "Nationality is required.",
+                notExists: "Please select a country of the list.",
+                sameCountry: "Please select different nacionalities."
             },
             email: {
-                required: "Email is required",
-                email: "Please enter a valid email address"
+                required: "Email is required.",
+                email: "Please enter a valid email address."
             }
         };
 
@@ -100,7 +103,10 @@ export class EmployeeFormComponent implements OnInit {
             lastName: ["", [Validators.required, Validators.minLength(3)]],
             birthday: ["", [Validators.required, birthdayValidator]],
             gender: ["", [Validators.required]],
-            nationalityList: this.fb.array([this.buildNationalityList(true)]),
+            nationalityList: this.fb.array(
+                [this.buildNationalityList(true)],
+                sameCountryValidator
+            ),
             email: ["", [Validators.required, Validators.email]]
         });
 
@@ -116,6 +122,7 @@ export class EmployeeFormComponent implements OnInit {
             { lastName: this.lastName },
             { birthday: this.birthday },
             { gender: this.gender },
+            { nationality: this.nationalityList },
             { email: this.email }
         ];
 
@@ -141,10 +148,11 @@ export class EmployeeFormComponent implements OnInit {
         this.handleFormArraySubscription(this.arrayList);
     }
 
-    buildNationalityList(required: boolean): FormGroup {
+    buildNationalityList(main: boolean): FormGroup {
         let validators = [countryValidator.bind(this)];
 
-        if (required) {
+        if (main) {
+            // only the first nationality field is required
             validators.push(Validators.required);
         }
 
