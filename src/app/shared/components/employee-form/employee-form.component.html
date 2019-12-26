@@ -5,10 +5,10 @@
             type="text"
             id="firstName"
             formControlName="firstName"
-            [class.validation-error]="displayedMessages.firstName"
+            [class.validation-error]="displayedMessages.firstName.length !== 0"
         />
-        <div>
-            {{ displayedMessages.firstName }}
+        <div *ngFor="let message of displayedMessages.firstName">
+            {{ message }}
         </div>
     </div>
 
@@ -18,10 +18,10 @@
             type="text"
             id="lastName"
             formControlName="lastName"
-            [class.validation-error]="displayedMessages.lastName"
+            [class.validation-error]="displayedMessages.lastName.length !== 0"
         />
-        <div>
-            {{ displayedMessages.lastName }}
+        <div *ngFor="let message of displayedMessages.lastName">
+            {{ message }}
         </div>
     </div>
 
@@ -31,14 +31,14 @@
             type="date"
             id="birthday"
             formControlName="birthday"
-            [class.validation-error]="displayedMessages.birthday"
+            [class.validation-error]="displayedMessages.birthday.length !== 0"
         />
-        <div>
-            {{ displayedMessages.birthday }}
+        <div *ngFor="let message of displayedMessages.birthday">
+            {{ message }}
         </div>
     </div>
 
-    <div>
+    <div [class.validation-error]="displayedMessages.gender.length !== 0">
         <label for="male">Gender</label>
         <label for="male">
             <input
@@ -46,7 +46,6 @@
                 id="male"
                 value="male"
                 formControlName="gender"
-                [class.validation-error]="displayedMessages.gender"
             />
             Male
         </label>
@@ -56,7 +55,6 @@
                 id="female"
                 value="female"
                 formControlName="gender"
-                [class.validation-error]="displayedMessages.gender"
             />Female
         </label>
         <label for="other">
@@ -65,11 +63,10 @@
                 id="other"
                 value="other"
                 formControlName="gender"
-                [class.validation-error]="displayedMessages.gender"
             />Other
         </label>
-        <div>
-            {{ displayedMessages.birthday }}
+        <div *ngFor="let message of displayedMessages.gender">
+            {{ message }}
         </div>
     </div>
 
@@ -80,13 +77,15 @@
             *ngFor="let nationality of nationalityList.controls; let i = index"
         >
             <div [formGroupName]="i">
-                <div class="ng-autocomplete">
+                <div
+                    class="ng-autocomplete"
+                    [class.validation-error]="
+                        displayedMessages?.nationality1?.length
+                    "
+                >
                     <ng-autocomplete
                         id="nationality"
                         formControlName="nationality"
-                        [class.validation-error]="
-                            displayedMessages.nationalityList
-                        "
                         [isLoading]="countryList.data.length === 0"
                         [data]="countryList.data"
                         [searchKeyword]="countryList.keyword"
@@ -122,8 +121,12 @@
                 delete
             </button>
 
-            <div>
-                {{ displayedMessages["nationality" + (i + 1)] }}
+            <div
+                *ngFor="
+                    let message of displayedMessages['nationality' + (i + 1)]
+                "
+            >
+                {{ message }}
             </div>
         </div>
     </div>
@@ -134,11 +137,11 @@
             type="text"
             id="email"
             formControlName="email"
-            [class.validation-error]="displayedMessages.email"
+            [class.validation-error]="displayedMessages.email.length !== 0"
         />
 
-        <div>
-            {{ displayedMessages.email }}
+        <div *ngFor="let message of displayedMessages.email">
+            {{ message }}
         </div>
     </div>
 

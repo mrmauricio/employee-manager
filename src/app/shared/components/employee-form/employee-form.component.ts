@@ -50,11 +50,11 @@ export class EmployeeFormComponent implements OnInit {
     }
 
     displayedMessages = {
-        firstName: "",
-        lastName: "",
-        birthday: "",
-        gender: "",
-        email: ""
+        firstName: [],
+        lastName: [],
+        birthday: [],
+        gender: [],
+        email: []
     };
 
     validationMessages;
@@ -204,19 +204,18 @@ export class EmployeeFormComponent implements OnInit {
 
         if (id) {
             controlName = `${name}${id}`;
-            console.log(controlName);
         } else {
             controlName = name;
         }
 
-        this.displayedMessages[controlName] = "";
+        this.displayedMessages[controlName] = [];
 
         if ((c.touched || c.dirty) && c.errors) {
-            // pega as chaves do errors do Control e então busca na variavel
-            // validationMessages por essa chave, p/ então adicionar a msg
-            this.displayedMessages[controlName] = Object.keys(c.errors)
-                .map(key => this.validationMessages[name][key])
-                .join(" ");
+            let keys = Object.keys(c.errors);
+
+            this.displayedMessages[controlName] = keys.map(
+                key => this.validationMessages[name][key]
+            );
         }
         //console.log(c);
         //console.log(this.displayedMessages);
