@@ -73,14 +73,15 @@
     <div>
         <label for="nationality">Nationality</label>
         <div
-            formArrayName="nationalityList"
-            *ngFor="let nationality of nationalityList.controls; let i = index"
+            formArrayName="nationalityArray"
+            *ngFor="let nationality of nationalityArray.controls; let i = index"
         >
             <div [formGroupName]="i">
                 <div
                     class="ng-autocomplete"
                     [class.validation-error]="
-                        displayedMessages?.nationality1?.length
+                        displayedMessages?.nationality1?.length ||
+                        displayedMessages?.nationalityGroup?.length
                     "
                 >
                     <ng-autocomplete
@@ -107,7 +108,7 @@
                 type="button"
                 (click)="handleNationalityAdd()"
                 [disabled]="
-                    !nationalityList.valid || nationalityList.length !== 1
+                    !nationalityArray.valid || nationalityArray.length !== 1
                 "
                 *ngIf="i === 0"
             >
@@ -129,10 +130,11 @@
                 {{ message }}
             </div>
         </div>
-        <div *ngFor="let message of displayedMessages.nationality">
+        <div *ngFor="let message of displayedMessages.nationalityGroup">
             {{ message }}
         </div>
     </div>
+
     <div>
         <label for="email">Email</label>
         <input
@@ -143,6 +145,38 @@
         />
 
         <div *ngFor="let message of displayedMessages.email">
+            {{ message }}
+        </div>
+    </div>
+
+    <div formGroupName="passwordGroup">
+        <div>
+            <label for="password">Password</label>
+            <input
+                type="password"
+                id="password"
+                formControlName="password"
+                [class.validation-error]="
+                    displayedMessages.password.length !== 0 ||
+                    displayedMessages.passwordGroup.length !== 0
+                "
+            />
+            <div *ngFor="let message of displayedMessages.password">
+                {{ message }}
+            </div>
+        </div>
+        <div>
+            <label for="confirmPassword">Confirm Password</label>
+            <input
+                type="password"
+                id="confirmPassword"
+                formControlName="confirmPassword"
+                [class.validation-error]="
+                    displayedMessages.passwordGroup.length !== 0
+                "
+            />
+        </div>
+        <div *ngFor="let message of displayedMessages.passwordGroup">
             {{ message }}
         </div>
     </div>

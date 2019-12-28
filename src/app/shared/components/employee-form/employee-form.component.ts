@@ -4,7 +4,7 @@ import {
     FormBuilder,
     Validators,
     AbstractControl,
-    ValidatorFn,
+    FormControl,
     FormArray
 } from "@angular/forms";
 
@@ -15,6 +15,7 @@ import {
     countryValidator,
     sameCountryValidator
 } from "../../validators/countryValidator";
+import { passwordValidator } from "../../validators/passwordValidator";
 
 import { Employee } from "./../../../classes/employee";
 
@@ -39,8 +40,10 @@ export class EmployeeFormComponent implements OnInit {
         lastName: [],
         birthday: [],
         gender: [],
-        nationality: [],
-        email: []
+        nationalityGroup: [],
+        email: [],
+        password: [],
+        passwordGroup: []
     };
 
     countryList = {
@@ -60,11 +63,17 @@ export class EmployeeFormComponent implements OnInit {
     get gender(): AbstractControl {
         return this.employeeForm.get("gender");
     }
-    get nationalityList(): FormArray {
-        return this.employeeForm.get("nationalityList") as FormArray;
+    get nationalityArray(): FormArray {
+        return this.employeeForm.get("nationalityArray") as FormArray;
     }
     get email(): AbstractControl {
         return this.employeeForm.get("email");
+    }
+    get passwordGroup(): AbstractControl {
+        return this.employeeForm.get("passwordGroup");
+    }
+    get password(): AbstractControl {
+        return this.employeeForm.get("passwordGroup.password");
     }
 
     constructor(private fb: FormBuilder, private formService: FormService) {}
@@ -87,14 +96,24 @@ export class EmployeeFormComponent implements OnInit {
             gender: {
                 required: "Gender is required."
             },
+            nationalityGroup: {
+                sameCountry: "Please select different nationalities."
+            },
             nationality: {
                 required: "Nationality is required.",
-                notExists: "Please select a country of the list.",
-                sameCountry: "Please select different nacionalities."
+                notExists: "Please select a country from the list."
             },
             email: {
                 required: "Email is required.",
                 email: "Please enter a valid email address."
+            },
+            passwordGroup: {
+                differentPasswords:
+                    "Passwords are not matching. Please verify it."
+            },
+            password: {
+                required: "Password is required.",
+                minlength: "Password must have at least eigth characters."
             }
         };
 
@@ -103,11 +122,21 @@ export class EmployeeFormComponent implements OnInit {
             lastName: ["", [Validators.required, Validators.minLength(3)]],
             birthday: ["", [Validators.required, birthdayValidator]],
             gender: ["", [Validators.required]],
-            nationalityList: this.fb.array(
-                [this.buildNationalityList(true)],
-                sameCountryValidator
+            nationalityArray: this.fb.array(
+                [this.buildNationalityGroup(true)],
+                { validators: sameCountryValidator }
             ),
-            email: ["", [Validators.required, Validators.email]]
+            email: ["", [Validators.required, Validators.email]],
+            passwordGroup: this.fb.group(
+                {
+                    password: [
+                        "",
+                        [Validators.required, Validators.minLength(8)]
+                    ],
+                    confirmPassword: [""]
+                },
+                { validator: passwordValidator }
+            )
         });
 
         // fetch data from api
@@ -122,8 +151,10 @@ export class EmployeeFormComponent implements OnInit {
             { lastName: this.lastName },
             { birthday: this.birthday },
             { gender: this.gender },
-            { nationality: this.nationalityList },
-            { email: this.email }
+            { nationalityGroup: this.nationalityArray },
+            { email: this.email },
+            { passwordGroup: this.passwordGroup },
+            { password: this.password }
         ];
 
         this.controlList.forEach(formControl => {
@@ -140,7 +171,7 @@ export class EmployeeFormComponent implements OnInit {
 
         this.arrayList = [
             {
-                nationality: this.nationalityList.controls[0]["controls"]
+                nationality: this.nationalityArray.controls[0]["controls"]
                     .nationality
             }
         ];
@@ -148,7 +179,7 @@ export class EmployeeFormComponent implements OnInit {
         this.handleFormArraySubscription(this.arrayList);
     }
 
-    buildNationalityList(main: boolean): FormGroup {
+    buildNationalityGroup(main: boolean): FormGroup {
         let validators = [countryValidator.bind(this)];
 
         if (main) {
@@ -173,7 +204,7 @@ export class EmployeeFormComponent implements OnInit {
     ) {
         controlList.forEach(formControl => {
             let key = Object.keys(formControl)[0];
-            let num = this.nationalityList.length;
+            let num = this.nationalityArray.length;
 
             formControl[key].valueChanges
                 .pipe(debounceTime(1000))
@@ -182,12 +213,12 @@ export class EmployeeFormComponent implements OnInit {
     }
 
     handleNationalityAdd(): void {
-        this.nationalityList.push(this.buildNationalityList(false));
+        this.nationalityArray.push(this.buildNationalityGroup(false));
 
         let controlList = [
             {
-                nationality: this.nationalityList.controls[
-                    this.nationalityList.length - 1
+                nationality: this.nationalityArray.controls[
+                    this.nationalityArray.length - 1
                 ]["controls"].nationality
             }
         ];
@@ -196,7 +227,7 @@ export class EmployeeFormComponent implements OnInit {
     }
 
     handleNationalityDelete(): void {
-        this.nationalityList.removeAt(1);
+        this.nationalityArray.removeAt(1);
     }
 
     hasError(c: AbstractControl): boolean {
