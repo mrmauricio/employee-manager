@@ -43,6 +43,7 @@
         <label for="male">
             <input
                 type="radio"
+                name="gender"
                 id="male"
                 value="male"
                 formControlName="gender"
@@ -52,6 +53,7 @@
         <label for="female">
             <input
                 type="radio"
+                name="gender"
                 id="female"
                 value="female"
                 formControlName="gender"
@@ -60,6 +62,7 @@
         <label for="other">
             <input
                 type="radio"
+                name="gender"
                 id="other"
                 value="other"
                 formControlName="gender"
@@ -71,7 +74,7 @@
     </div>
 
     <div>
-        <label for="nationality">Nationality</label>
+        <label for="nationality1">Nationality</label>
         <div
             formArrayName="nationalityArray"
             *ngFor="let nationality of nationalityArray.controls; let i = index"
@@ -80,12 +83,12 @@
                 <div
                     class="ng-autocomplete"
                     [class.validation-error]="
-                        displayedMessages?.nationality1?.length ||
+                        displayedMessages['nationality_' + (i + 1)]?.length ||
                         displayedMessages?.nationalityGroup?.length
                     "
                 >
                     <ng-autocomplete
-                        id="nationality"
+                        id="{{ 'nationality_' + (i + 1) }}"
                         formControlName="nationality"
                         [isLoading]="countryList.data.length === 0"
                         [data]="countryList.data"
@@ -106,7 +109,9 @@
             </div>
             <button
                 type="button"
-                (click)="handleNationalityAdd()"
+                (click)="
+                    handleArrayAdd('nationalityArray', this.nationalityArray)
+                "
                 [disabled]="
                     !nationalityArray.valid || nationalityArray.length !== 1
                 "
@@ -116,15 +121,15 @@
             </button>
             <button
                 type="button"
-                (click)="handleNationalityDelete()"
-                *ngIf="i === 1"
+                (click)="handleArrayDelete(nationalityArray, i)"
+                *ngIf="i !== 0"
             >
                 delete
             </button>
 
             <div
                 *ngFor="
-                    let message of displayedMessages['nationality' + (i + 1)]
+                    let message of displayedMessages['nationality_' + (i + 1)]
                 "
             >
                 {{ message }}
@@ -178,6 +183,175 @@
         </div>
         <div *ngFor="let message of displayedMessages.passwordGroup">
             {{ message }}
+        </div>
+    </div>
+
+    <div
+        formArrayName="addressArray"
+        *ngFor="let address of addressArray.controls; let i = index"
+    >
+        <div [formGroupName]="i">
+            <div
+                [class.validation-error]="
+                    displayedMessages['addressType_' + (i + 1)].length !== 0
+                "
+            >
+                <label for="{{ 'home_' + (i + 1) }}">Address Type</label>
+                <label for="{{ 'home_' + (i + 1) }}">
+                    <input
+                        type="radio"
+                        name="addressType"
+                        value="home"
+                        id="{{ 'home_' + (i + 1) }}"
+                        formControlName="addressType"
+                    />Home
+                </label>
+                <label for="{{ 'work_' + (i + 1) }}">
+                    <input
+                        type="radio"
+                        name="addressType"
+                        value="work"
+                        id="{{ 'work_' + (i + 1) }}"
+                        formControlName="addressType"
+                    />
+                    Work
+                </label>
+                <label for="{{ 'other_' + (i + 1) }}">
+                    <input
+                        type="radio"
+                        name="addressType"
+                        value="other"
+                        id="{{ 'other_' + (i + 1) }}"
+                        formControlName="addressType"
+                    />
+                    Other
+                </label>
+                <div
+                    *ngFor="
+                        let message of displayedMessages[
+                            'addressType_' + (i + 1)
+                        ]
+                    "
+                >
+                    {{ message }}
+                </div>
+            </div>
+
+            <div>
+                <label for="{{ 'street1_' + (i + 1) }}">Street 1</label>
+                <input
+                    type="text"
+                    id="{{ 'street1_' + (i + 1) }}"
+                    formControlName="street1"
+                    [class.validation-error]="
+                        displayedMessages['street1_' + (i + 1)].length !== 0
+                    "
+                />
+                <div
+                    *ngFor="
+                        let message of displayedMessages['street1_' + (i + 1)]
+                    "
+                >
+                    {{ message }}
+                </div>
+                {{ i }}
+            </div>
+
+            <div>
+                <label for="{{ 'street2_' + (i + 1) }}">Street 2</label>
+                <input
+                    type="text"
+                    id="{{ 'street2_' + (i + 1) }}"
+                    formControlName="street2"
+                />
+            </div>
+
+            <div>
+                <label for="{{ 'zip_' + (i + 1) }}">Zip Code</label>
+                <input
+                    type="text"
+                    id="{{ 'zip_' + (i + 1) }}"
+                    formControlName="zip"
+                    [class.validation-error]="
+                        displayedMessages['zip_' + (i + 1)].length !== 0
+                    "
+                />
+                <div
+                    *ngFor="let message of displayedMessages['zip_' + (i + 1)]"
+                >
+                    {{ message }}
+                </div>
+            </div>
+
+            <div>
+                <label for="{{ 'city_' + (i + 1) }}">City</label>
+                <input
+                    type="text"
+                    id="{{ 'city_' + (i + 1) }}"
+                    formControlName="city"
+                    [class.validation-error]="
+                        displayedMessages['city_' + (i + 1)].length !== 0
+                    "
+                />
+                <div
+                    *ngFor="let message of displayedMessages['city_' + (i + 1)]"
+                >
+                    {{ message }}
+                </div>
+            </div>
+
+            <div>
+                <label for="{{ 'country_' + (i + 1) }}">Country</label>
+                <div
+                    [class.validation-error]="
+                        displayedMessages['country_' + (i + 1)].length !== 0
+                    "
+                >
+                    <ng-autocomplete
+                        id="{{ 'country_' + (i + 1) }}"
+                        formControlName="country"
+                        [isLoading]="countryList.data.length === 0"
+                        [data]="countryList.data"
+                        [searchKeyword]="countryList.keyword"
+                        [itemTemplate]="itemTemplate"
+                        [notFoundTemplate]="notFoundTemplate"
+                    >
+                    </ng-autocomplete>
+
+                    <ng-template #itemTemplate let-item>
+                        <a [innerHTML]="item"></a>
+                    </ng-template>
+
+                    <ng-template #notFoundTemplate let-notFound>
+                        <div [innerHTML]="notFound"></div>
+                    </ng-template>
+                </div>
+
+                <div
+                    *ngFor="
+                        let message of displayedMessages['country_' + (i + 1)]
+                    "
+                >
+                    {{ message }}
+                </div>
+            </div>
+
+            <button
+                type="button"
+                (click)="handleArrayAdd('addressArray', addressArray)"
+                [disabled]="addressArray.valid"
+                *ngIf="i === 0"
+            >
+                add
+            </button>
+
+            <button
+                type="button"
+                (click)="handleArrayDelete(addressArray, i)"
+                *ngIf="i !== 0"
+            >
+                delete
+            </button>
         </div>
     </div>
 

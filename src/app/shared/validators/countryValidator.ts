@@ -7,7 +7,7 @@ export function countryValidator(
         country => country === c.value
     );
 
-    if (c.pristine || valueExists.length !== 0) {
+    if (c.pristine || valueExists.length !== 0 || c.value === "") {
         return null;
     }
 

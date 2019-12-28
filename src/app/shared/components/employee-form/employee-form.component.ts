@@ -31,19 +31,27 @@ export class EmployeeFormComponent implements OnInit {
     employeeForm: FormGroup;
     employee: Employee;
 
-    controlList: { [key: string]: AbstractControl }[];
-    arrayList: { [key: string]: AbstractControl }[];
-
     validationMessages;
     displayedMessages = {
         firstName: [],
         lastName: [],
         birthday: [],
         gender: [],
+        nationality_1: [],
         nationalityGroup: [],
         email: [],
         password: [],
-        passwordGroup: []
+        passwordGroup: [],
+        addressType_1: [],
+        street1_1: [],
+        zip_1: [],
+        city_1: [],
+        country_1: []
+    };
+
+    arrayKeysToValidate = {
+        addressArray: ["addressType", "street1", "zip", "city", "country"],
+        nationalityArray: ["nationality"]
     };
 
     countryList = {
@@ -74,6 +82,9 @@ export class EmployeeFormComponent implements OnInit {
     }
     get password(): AbstractControl {
         return this.employeeForm.get("passwordGroup.password");
+    }
+    get addressArray(): FormArray {
+        return this.employeeForm.get("addressArray") as FormArray;
     }
 
     constructor(private fb: FormBuilder, private formService: FormService) {}
@@ -114,18 +125,34 @@ export class EmployeeFormComponent implements OnInit {
             password: {
                 required: "Password is required.",
                 minlength: "Password must have at least eigth characters."
+            },
+            addressType: {
+                required: "Address Type is required."
+            },
+            street1: {
+                required: "Street 1 is required."
+            },
+            zip: {
+                required: "Zip is required."
+            },
+            city: {
+                required: "City is required."
+            },
+            country: {
+                required: "Country is required.",
+                notExists: "Please select a country from the list."
             }
         };
 
+        // create form group
         this.employeeForm = this.fb.group({
             firstName: ["", [Validators.required, Validators.minLength(3)]],
             lastName: ["", [Validators.required, Validators.minLength(3)]],
             birthday: ["", [Validators.required, birthdayValidator]],
             gender: ["", [Validators.required]],
-            nationalityArray: this.fb.array(
-                [this.buildNationalityGroup(true)],
-                { validators: sameCountryValidator }
-            ),
+            nationalityArray: this.fb.array([], {
+                validators: sameCountryValidator
+            }),
             email: ["", [Validators.required, Validators.email]],
             passwordGroup: this.fb.group(
                 {
@@ -136,17 +163,19 @@ export class EmployeeFormComponent implements OnInit {
                     confirmPassword: [""]
                 },
                 { validator: passwordValidator }
-            )
+            ),
+            addressArray: this.fb.array([])
         });
+
+        // add first data and subscriptions to form arrays
+        this.handleArrayAdd("nationalityArray", this.nationalityArray);
+        this.handleArrayAdd("addressArray", this.addressArray);
 
         // fetch data from api
         this.getCountryList();
 
-        /*
-         ** subscribe to each of the formControl's value changes
-         */
-
-        this.controlList = [
+        // add subscriptions to form controls/groups
+        let controlList: { [key: string]: AbstractControl }[] = [
             { firstName: this.firstName },
             { lastName: this.lastName },
             { birthday: this.birthday },
@@ -156,41 +185,62 @@ export class EmployeeFormComponent implements OnInit {
             { passwordGroup: this.passwordGroup },
             { password: this.password }
         ];
-
-        this.controlList.forEach(formControl => {
-            let key = Object.keys(formControl)[0];
-
-            formControl[key].valueChanges
-                .pipe(debounceTime(1000))
-                .subscribe(() => this.setMessage(formControl[key], key, null));
-        });
-
-        /*
-         ** subscribe to each of the formArrays's value changes
-         */
-
-        this.arrayList = [
-            {
-                nationality: this.nationalityArray.controls[0]["controls"]
-                    .nationality
-            }
-        ];
-
-        this.handleFormArraySubscription(this.arrayList);
+        this.handleSubscription("FormControl", controlList, null);
     }
 
-    buildNationalityGroup(main: boolean): FormGroup {
-        let validators = [countryValidator.bind(this)];
+    buildGroup(groupName: string, required: boolean): FormGroup {
+        switch (groupName) {
+            case "addressArray":
+                return this.fb.group({
+                    addressType: ["", Validators.required],
+                    street1: ["", Validators.required],
+                    street2: [""],
+                    zip: ["", Validators.required],
+                    city: ["", Validators.required],
+                    country: [
+                        "",
+                        [Validators.required, countryValidator.bind(this)]
+                    ]
+                });
+            case "nationalityArray":
+                let validators = [countryValidator.bind(this)];
 
-        if (main) {
-            // only the first nationality field is required
-            validators.push(Validators.required);
+                if (required) {
+                    // only the first nationality field is required
+                    validators.push(Validators.required);
+                }
+
+                return this.fb.group({
+                    nationality: ["", validators]
+                });
+            default:
+                break;
         }
-
-        return this.fb.group({
-            nationality: ["", validators]
-        });
     }
+
+    //buildAddressGroup(): FormGroup {
+    //    return this.fb.group({
+    //        addressType: ["", Validators.required],
+    //        street1: ["", Validators.required],
+    //        street2: [""],
+    //        zip: ["", Validators.required],
+    //        city: ["", Validators.required],
+    //        country: ["", [Validators.required, countryValidator.bind(this)]]
+    //    });
+    //}
+
+    //buildNationalityGroup(required: boolean): FormGroup {
+    //    let validators = [countryValidator.bind(this)];
+    //
+    //    if (required) {
+    //        // only the first nationality field is required
+    //        validators.push(Validators.required);
+    //    }
+    //
+    //    return this.fb.group({
+    //        nationality: ["", validators]
+    //    });
+    //}
 
     getCountryList() {
         this.formService.getCountryList().subscribe({
@@ -199,50 +249,113 @@ export class EmployeeFormComponent implements OnInit {
         });
     }
 
-    handleFormArraySubscription(
-        controlList: { [key: string]: AbstractControl }[]
+    //handleFormControlSubscription(
+    //    controlList: { [key: string]: AbstractControl }[]
+    //) {
+    //    controlList.forEach(formControl => {
+    //        let key = Object.keys(formControl)[0];
+    //
+    //        formControl[key].valueChanges
+    //            .pipe(debounceTime(1000))
+    //            .subscribe(() => this.setMessage(formControl[key], key, null));
+    //    });
+    //}
+
+    handleSubscription(
+        type: string,
+        controlList: { [key: string]: AbstractControl }[],
+        formArrayLength: number | null
     ) {
+        let id: number;
+
+        switch (type) {
+            case "FormArray":
+                id = formArrayLength;
+                break;
+            case "FormControl":
+                id = null;
+                break;
+            default:
+                break;
+        }
+
         controlList.forEach(formControl => {
             let key = Object.keys(formControl)[0];
-            let num = this.nationalityArray.length;
 
             formControl[key].valueChanges
                 .pipe(debounceTime(1000))
-                .subscribe(() => this.setMessage(formControl[key], key, num));
+                .subscribe(() => this.setMessage(formControl[key], key, id));
         });
     }
 
-    handleNationalityAdd(): void {
-        this.nationalityArray.push(this.buildNationalityGroup(false));
+    handleArrayAdd(arrayName: string, formArray: FormArray): void {
+        let id = formArray.length + 1;
+        let required: boolean = false;
 
-        let controlList = [
-            {
-                nationality: this.nationalityArray.controls[
-                    this.nationalityArray.length - 1
-                ]["controls"].nationality
-            }
-        ];
-
-        this.handleFormArraySubscription(controlList);
-    }
-
-    handleNationalityDelete(): void {
-        this.nationalityArray.removeAt(1);
-    }
-
-    hasError(c: AbstractControl): boolean {
-        if ((c.dirty || c.touched) && c.invalid) {
-            return true;
+        if (arrayName === "nationalityArray" && id === 1) {
+            required = true;
         }
 
-        return false;
+        let keys = this.arrayKeysToValidate[arrayName];
+
+        keys.forEach(key => {
+            this.displayedMessages[`${key}_${id}`] = [];
+        });
+
+        formArray.push(this.buildGroup(arrayName, required));
+
+        let controlList = keys.map(key => {
+            return {
+                [key]: formArray.controls[id - 1].get(key)
+            };
+        });
+
+        this.handleSubscription("FormArray", controlList, formArray.length);
+    }
+
+    //handleNationalityAdd(): void {
+    //    let id = this.nationalityArray.length + 1;
+    //    let keys = ["nationality"];
+    //    let required: boolean;
+    //
+    //    console.log(id);
+    //
+    //    if (id === 1) {
+    //        required = true;
+    //    } else {
+    //        required = false;
+    //    }
+    //
+    //    keys.forEach(key => {
+    //        this.displayedMessages[`${key}_${id}`] = [];
+    //    });
+    //
+    //    this.nationalityArray.push(this.buildNationalityGroup(required));
+    //
+    //    let controlList = [
+    //        {
+    //            nationality: this.nationalityArray.controls[id - 1].get(
+    //                "nationality"
+    //            )
+    //        }
+    //    ];
+    //
+    //    this.handleSubscription(
+    //        "FormArray",
+    //        controlList,
+    //        this.nationalityArray.length
+    //    );
+    //}
+
+    handleArrayDelete(formArray: FormArray, id: number): void {
+        formArray.removeAt(id);
     }
 
     setMessage(c: AbstractControl, name: string, id: number | null): void {
         let controlName: string;
 
         if (id) {
-            controlName = `${name}${id}`;
+            controlName = `${name}_${id}`;
         } else {
             controlName = name;
         }
