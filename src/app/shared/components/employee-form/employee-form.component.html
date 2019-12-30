@@ -121,7 +121,9 @@
             </button>
             <button
                 type="button"
-                (click)="handleArrayDelete(nationalityArray, i)"
+                (click)="
+                    handleArrayDelete('nationalityArray', nationalityArray, i)
+                "
                 *ngIf="i !== 0"
             >
                 delete
@@ -247,6 +249,7 @@
                         displayedMessages['street1_' + (i + 1)].length !== 0
                     "
                 />
+                {{ "street1_" + (i + 1) }}
                 <div
                     *ngFor="
                         let message of displayedMessages['street1_' + (i + 1)]
@@ -254,7 +257,6 @@
                 >
                     {{ message }}
                 </div>
-                {{ i }}
             </div>
 
             <div>
@@ -347,7 +349,7 @@
 
             <button
                 type="button"
-                (click)="handleArrayDelete(addressArray, i)"
+                (click)="handleArrayDelete('addressArray', addressArray, i)"
                 *ngIf="i !== 0"
             >
                 delete

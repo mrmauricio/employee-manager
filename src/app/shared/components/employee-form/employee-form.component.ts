@@ -37,16 +37,10 @@ export class EmployeeFormComponent implements OnInit {
         lastName: [],
         birthday: [],
         gender: [],
-        nationality_1: [],
         nationalityGroup: [],
         email: [],
         password: [],
-        passwordGroup: [],
-        addressType_1: [],
-        street1_1: [],
-        zip_1: [],
-        city_1: [],
-        country_1: []
+        passwordGroup: []
     };
 
     arrayKeysToValidate = {
@@ -218,48 +212,12 @@ export class EmployeeFormComponent implements OnInit {
         }
     }
 
-    //buildAddressGroup(): FormGroup {
-    //    return this.fb.group({
-    //        addressType: ["", Validators.required],
-    //        street1: ["", Validators.required],
-    //        street2: [""],
-    //        zip: ["", Validators.required],
-    //        city: ["", Validators.required],
-    //        country: ["", [Validators.required, countryValidator.bind(this)]]
-    //    });
-    //}
-
-    //buildNationalityGroup(required: boolean): FormGroup {
-    //    let validators = [countryValidator.bind(this)];
-    //
-    //    if (required) {
-    //        // only the first nationality field is required
-    //        validators.push(Validators.required);
-    //    }
-    //
-    //    return this.fb.group({
-    //        nationality: ["", validators]
-    //    });
-    //}
-
     getCountryList() {
         this.formService.getCountryList().subscribe({
             next: countryList => (this.countryList.data = countryList),
             error: err => this.console.log(err)
         });
     }
-
-    //handleFormControlSubscription(
-    //    controlList: { [key: string]: AbstractControl }[]
-    //) {
-    //    controlList.forEach(formControl => {
-    //        let key = Object.keys(formControl)[0];
-    //
-    //        formControl[key].valueChanges
-    //            .pipe(debounceTime(1000))
-    //            .subscribe(() => this.setMessage(formControl[key], key, null));
-    //    });
-    //}
 
     handleSubscription(
         type: string,
@@ -313,52 +271,28 @@ export class EmployeeFormComponent implements OnInit {
         this.handleSubscription("FormArray", controlList, formArray.length);
     }
 
-    //handleNationalityAdd(): void {
-    //    let id = this.nationalityArray.length + 1;
-    //    let keys = ["nationality"];
-    //    let required: boolean;
-    //
-    //    console.log(id);
-    //
-    //    if (id === 1) {
-    //        required = true;
-    //    } else {
-    //        required = false;
-    //    }
-    //
-    //    keys.forEach(key => {
-    //        this.displayedMessages[`${key}_${id}`] = [];
-    //    });
-    //
-    //    this.nationalityArray.push(this.buildNationalityGroup(required));
-    //
-    //    let controlList = [
-    //        {
-    //            nationality: this.nationalityArray.controls[id - 1].get(
-    //                "nationality"
-    //            )
-    //        }
-    //    ];
-    //
-    //    this.handleSubscription(
-    //        "FormArray",
-    //        controlList,
-    //        this.nationalityArray.length
-    //    );
-    //}
-
-    handleArrayDelete(formArray: FormArray, id: number): void {
+    handleArrayDelete(
+        arrayName: string,
+        formArray: FormArray,
+        id: number
+    ): void {
         formArray.removeAt(id);
+
+        // synchro displayed messages with array after removed item
+        this.arrayKeysToValidate[arrayName].forEach(key => {
+            for (let i = 1; i < formArray.length + 1; i++) {
+                if (i >= id + 1) {
+                    this.displayedMessages[
+                        `${key}_${i}`
+                    ] = this.displayedMessages[`${key}_${i + 1}`];
+                }
+            }
+        });
     }
 
     setMessage(c: AbstractControl, name: string, id: number | null): void {
         let controlName: string;
-
-        if (id) {
-            controlName = `${name}_${id}`;
-        } else {
-            controlName = name;
-        }
+        id ? (controlName = `${name}_${id}`) : (controlName = name);
 
         this.displayedMessages[controlName] = [];
 
@@ -369,8 +303,6 @@ export class EmployeeFormComponent implements OnInit {
                 key => this.validationMessages[name][key]
             );
         }
-        //console.log(c);
-        //console.log(this.displayedMessages);
     }
 
     submitForm(): void {
