@@ -1,3 +1,141 @@
-.validation-error {
-    border: 0.2rem solid red;
+form {
+    margin: 1rem;
+    padding: 1rem;
+    border: 0.2rem solid #7159c1;
+    border-radius: 1rem;
+    width: 50rem;
+
+    section {
+        > header {
+            padding: 2rem 0;
+            font-weight: bold;
+
+            display: flex;
+            align-items: center;
+
+            > span {
+                background: #7159c1;
+                color: #ffffff;
+                padding: 0.4rem 0.9rem;
+                border-radius: 50%;
+
+                margin-right: 1rem;
+            }
+        }
+    }
+}
+
+.section-wrapper {
+    background: #f5f2ff;
+    padding: 1rem;
+    border-radius: 1rem;
+
+    font-size: 1.3rem;
+}
+
+.group-header {
+    display: flex;
+    justify-content: space-between;
+
+    h3 {
+        font-size: 1.4rem;
+
+        margin-left: 1rem;
+    }
+}
+
+.field-wrapper {
+    margin: 1.5rem 1rem;
+    border: 0.1rem solid #7159c1;
+    border-radius: 0.3rem;
+    background: #ffffff;
+
+    display: flex;
+    flex-direction: column;
+
+    .input {
+        border: none;
+        outline: none;
+
+        height: 1.7rem;
+        margin: 0.25rem;
+        padding-left: 1rem;
+
+        font-size: 1.4rem;
+    }
+}
+
+.field-name {
+    border: 0.1rem solid #7159c1;
+    color: #7159c1;
+    border-radius: 0.3rem;
+    background: #f5f2ff;
+
+    font-weight: bold;
+    font-size: 1rem;
+
+    margin-top: -0.9rem;
+    margin-left: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    width: fit-content;
+}
+
+.input-autocomplete {
+    display: flex;
+    padding-left: 0.2rem;
+
+    .ng-autocomplete {
+        min-width: 42rem;
+        width: 100%;
+    }
+
+    // estilizar a classe que esta dentro do componente
+    // para alterar os estilos da lib
+    ng-autocomplete::ng-deep .autocomplete-container {
+        box-shadow: none;
+
+        .x {
+            display: none;
+        }
+    }
+}
+
+.button-add {
+    background: none;
+    border: none;
+    font-size: 1.6rem;
+    color: #36bd41;
+}
+
+.button-add[disabled] {
+    color: #cfcfcf;
+}
+
+.button-remove {
+    background: none;
+    border: none;
+    font-size: 1.6rem;
+    color: #e01717;
+}
+
+.button-remove[disabled] {
+    color: #cfcfcf;
+}
+
+.validation-error-message {
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 0.2rem 0.2rem 0.2rem 1rem;
+    border-top: 0.1rem solid #e01717;
+    background-color: #ffecec;
+}
+
+.validation-error-field {
+    border: 0.1rem solid #e01717;
+    color: #e01717;
+}
+
+.validation-error-label {
+    @extend .validation-error-field;
+    background-color: #ffecec;
 }

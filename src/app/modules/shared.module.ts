@@ -2,6 +2,7 @@ import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { AutocompleteLibModule } from "angular-ng-autocomplete";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 import { EmployeeFormComponent } from "../shared/components/employee-form/employee-form.component";
 
@@ -11,7 +12,8 @@ import { EmployeeFormComponent } from "../shared/components/employee-form/employ
         CommonModule,
         ReactiveFormsModule,
         FormsModule,
-        AutocompleteLibModule
+        AutocompleteLibModule,
+        FontAwesomeModule
     ],
     exports: [EmployeeFormComponent]
 })

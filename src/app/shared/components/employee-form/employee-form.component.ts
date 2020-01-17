@@ -4,9 +4,9 @@ import {
     FormBuilder,
     Validators,
     AbstractControl,
-    FormControl,
     FormArray
 } from "@angular/forms";
+import { faPlusCircle, faMinusCircle } from "@fortawesome/free-solid-svg-icons";
 
 import { debounceTime } from "rxjs/operators";
 
@@ -80,6 +80,9 @@ export class EmployeeFormComponent implements OnInit {
     get addressArray(): FormArray {
         return this.employeeForm.get("addressArray") as FormArray;
     }
+
+    faPlusCircle = faPlusCircle;
+    faMinusCircle = faMinusCircle;
 
     constructor(private fb: FormBuilder, private formService: FormService) {}
 

@@ -1,361 +1,592 @@
 <form novalidate (ngSubmit)="submitForm()" [formGroup]="employeeForm">
-    <div>
-        <label for="firstName">First Name</label>
-        <input
-            type="text"
-            id="firstName"
-            formControlName="firstName"
-            [class.validation-error]="displayedMessages.firstName.length !== 0"
-        />
-        <div *ngFor="let message of displayedMessages.firstName">
-            {{ message }}
-        </div>
-    </div>
-
-    <div>
-        <label for="lastName">Last Name</label>
-        <input
-            type="text"
-            id="lastName"
-            formControlName="lastName"
-            [class.validation-error]="displayedMessages.lastName.length !== 0"
-        />
-        <div *ngFor="let message of displayedMessages.lastName">
-            {{ message }}
-        </div>
-    </div>
-
-    <div>
-        <label for="birthday">Birthday</label>
-        <input
-            type="date"
-            id="birthday"
-            formControlName="birthday"
-            [class.validation-error]="displayedMessages.birthday.length !== 0"
-        />
-        <div *ngFor="let message of displayedMessages.birthday">
-            {{ message }}
-        </div>
-    </div>
-
-    <div [class.validation-error]="displayedMessages.gender.length !== 0">
-        <label for="male">Gender</label>
-        <label for="male">
-            <input
-                type="radio"
-                name="gender"
-                id="male"
-                value="male"
-                formControlName="gender"
-            />
-            Male
-        </label>
-        <label for="female">
-            <input
-                type="radio"
-                name="gender"
-                id="female"
-                value="female"
-                formControlName="gender"
-            />Female
-        </label>
-        <label for="other">
-            <input
-                type="radio"
-                name="gender"
-                id="other"
-                value="other"
-                formControlName="gender"
-            />Other
-        </label>
-        <div *ngFor="let message of displayedMessages.gender">
-            {{ message }}
-        </div>
-    </div>
-
-    <div>
-        <label for="nationality1">Nationality</label>
-        <div
-            formArrayName="nationalityArray"
-            *ngFor="let nationality of nationalityArray.controls; let i = index"
-        >
-            <div [formGroupName]="i">
+    <section>
+        <header><span>1</span>Personal Data</header>
+        <div class="section-wrapper">
+            <div
+                class="field-wrapper"
+                [class.validation-error-field]="
+                    displayedMessages.firstName.length !== 0
+                "
+            >
+                <label
+                    for="firstName"
+                    class="field-name"
+                    [class.validation-error-label]="
+                        displayedMessages.firstName.length !== 0
+                    "
+                    >First Name</label
+                >
+                <input
+                    class="input"
+                    type="text"
+                    id="firstName"
+                    formControlName="firstName"
+                />
                 <div
-                    class="ng-autocomplete"
-                    [class.validation-error]="
+                    *ngFor="let message of displayedMessages.firstName"
+                    class="validation-error-message"
+                >
+                    {{ message }}
+                </div>
+            </div>
+
+            <div
+                class="field-wrapper"
+                [class.validation-error-field]="
+                    displayedMessages.lastName.length !== 0
+                "
+            >
+                <label
+                    for="lastName"
+                    class="field-name"
+                    [class.validation-error-label]="
+                        displayedMessages.lastName.length !== 0
+                    "
+                    >Last Name</label
+                >
+                <input
+                    class="input"
+                    type="text"
+                    id="lastName"
+                    formControlName="lastName"
+                />
+                <div
+                    *ngFor="let message of displayedMessages.lastName"
+                    class="validation-error-message"
+                >
+                    {{ message }}
+                </div>
+            </div>
+
+            <div
+                class="field-wrapper"
+                [class.validation-error-field]="
+                    displayedMessages.birthday.length !== 0
+                "
+            >
+                <label
+                    for="birthday"
+                    class="field-name"
+                    [class.validation-error-label]="
+                        displayedMessages.birthday.length !== 0
+                    "
+                    >Birthday</label
+                >
+                <input
+                    class="input"
+                    type="date"
+                    id="birthday"
+                    formControlName="birthday"
+                />
+                <div
+                    *ngFor="let message of displayedMessages.birthday"
+                    class="validation-error-message"
+                >
+                    {{ message }}
+                </div>
+            </div>
+
+            <div
+                class="field-wrapper"
+                [class.validation-error-field]="
+                    displayedMessages.gender.length !== 0
+                "
+            >
+                <label
+                    for="male"
+                    class="field-name"
+                    [class.validation-error-label]="
+                        displayedMessages.gender.length !== 0
+                    "
+                    >Gender</label
+                >
+                <div class="input">
+                    <label for="male">
+                        <input
+                            type="radio"
+                            name="gender"
+                            id="male"
+                            value="male"
+                            formControlName="gender"
+                        />Male
+                    </label>
+                    <label for="female">
+                        <input
+                            type="radio"
+                            name="gender"
+                            id="female"
+                            value="female"
+                            formControlName="gender"
+                        />Female
+                    </label>
+                    <label for="other">
+                        <input
+                            type="radio"
+                            name="gender"
+                            id="other"
+                            value="other"
+                            formControlName="gender"
+                        />Other
+                    </label>
+                </div>
+
+                <div
+                    *ngFor="let message of displayedMessages.gender"
+                    class="validation-error-message"
+                >
+                    {{ message }}
+                </div>
+            </div>
+
+            <div
+                class="field-wrapper"
+                *ngFor="
+                    let nationality of nationalityArray.controls;
+                    let i = index
+                "
+                [class.validation-error-field]="
+                    displayedMessages['nationality_' + (i + 1)]?.length ||
+                    displayedMessages?.nationalityGroup?.length
+                "
+            >
+                <label
+                    for="nationality1"
+                    class="field-name"
+                    [class.validation-error-label]="
                         displayedMessages['nationality_' + (i + 1)]?.length ||
                         displayedMessages?.nationalityGroup?.length
                     "
+                    >Nationality</label
                 >
-                    <ng-autocomplete
-                        id="{{ 'nationality_' + (i + 1) }}"
-                        formControlName="nationality"
-                        [isLoading]="countryList.data.length === 0"
-                        [data]="countryList.data"
-                        [searchKeyword]="countryList.keyword"
-                        [itemTemplate]="itemTemplate"
-                        [notFoundTemplate]="notFoundTemplate"
+                <div formArrayName="nationalityArray">
+                    <div class="input-autocomplete">
+                        <div [formGroupName]="i">
+                            <div class="ng-autocomplete">
+                                <ng-autocomplete
+                                    id="{{ 'nationality_' + (i + 1) }}"
+                                    formControlName="nationality"
+                                    [isLoading]="countryList.data.length === 0"
+                                    [data]="countryList.data"
+                                    [searchKeyword]="countryList.keyword"
+                                    [itemTemplate]="itemTemplate"
+                                    [notFoundTemplate]="notFoundTemplate"
+                                >
+                                </ng-autocomplete>
+
+                                <ng-template #itemTemplate let-item>
+                                    <a [innerHTML]="item"></a>
+                                </ng-template>
+
+                                <ng-template #notFoundTemplate let-notFound>
+                                    <div [innerHTML]="notFound"></div>
+                                </ng-template>
+                            </div>
+                        </div>
+                        <button
+                            class="button-add"
+                            type="button"
+                            (click)="
+                                handleArrayAdd(
+                                    'nationalityArray',
+                                    this.nationalityArray
+                                )
+                            "
+                            [disabled]="
+                                !nationalityArray.valid ||
+                                nationalityArray.length !== 1
+                            "
+                            *ngIf="i === 0"
+                        >
+                            <fa-icon [icon]="faPlusCircle"></fa-icon>
+                        </button>
+                        <button
+                            class="button-remove"
+                            type="button"
+                            (click)="
+                                handleArrayDelete(
+                                    'nationalityArray',
+                                    nationalityArray,
+                                    i
+                                )
+                            "
+                            *ngIf="i !== 0"
+                        >
+                            <fa-icon [icon]="faMinusCircle"></fa-icon>
+                        </button>
+                    </div>
+
+                    <div
+                        *ngFor="
+                            let message of displayedMessages[
+                                'nationality_' + (i + 1)
+                            ]
+                        "
+                        class="validation-error-message"
                     >
-                    </ng-autocomplete>
-
-                    <ng-template #itemTemplate let-item>
-                        <a [innerHTML]="item"></a>
-                    </ng-template>
-
-                    <ng-template #notFoundTemplate let-notFound>
-                        <div [innerHTML]="notFound"></div>
-                    </ng-template>
+                        {{ message }}
+                    </div>
+                </div>
+                <div
+                    *ngFor="let message of displayedMessages.nationalityGroup"
+                    class="validation-error-message"
+                >
+                    {{ message }}
                 </div>
             </div>
-            <button
-                type="button"
-                (click)="
-                    handleArrayAdd('nationalityArray', this.nationalityArray)
-                "
-                [disabled]="
-                    !nationalityArray.valid || nationalityArray.length !== 1
-                "
-                *ngIf="i === 0"
-            >
-                add
-            </button>
-            <button
-                type="button"
-                (click)="
-                    handleArrayDelete('nationalityArray', nationalityArray, i)
-                "
-                *ngIf="i !== 0"
-            >
-                delete
-            </button>
-
+        </div>
+    </section>
+    <section>
+        <header><span>2</span>Account Data</header>
+        <div class="section-wrapper">
             <div
-                *ngFor="
-                    let message of displayedMessages['nationality_' + (i + 1)]
+                class="field-wrapper"
+                [class.validation-error-field]="
+                    displayedMessages.email.length !== 0
                 "
             >
-                {{ message }}
-            </div>
-        </div>
-        <div *ngFor="let message of displayedMessages.nationalityGroup">
-            {{ message }}
-        </div>
-    </div>
-
-    <div>
-        <label for="email">Email</label>
-        <input
-            type="text"
-            id="email"
-            formControlName="email"
-            [class.validation-error]="displayedMessages.email.length !== 0"
-        />
-
-        <div *ngFor="let message of displayedMessages.email">
-            {{ message }}
-        </div>
-    </div>
-
-    <div formGroupName="passwordGroup">
-        <div>
-            <label for="password">Password</label>
-            <input
-                type="password"
-                id="password"
-                formControlName="password"
-                [class.validation-error]="
-                    displayedMessages.password.length !== 0 ||
-                    displayedMessages.passwordGroup.length !== 0
-                "
-            />
-            <div *ngFor="let message of displayedMessages.password">
-                {{ message }}
-            </div>
-        </div>
-        <div>
-            <label for="confirmPassword">Confirm Password</label>
-            <input
-                type="password"
-                id="confirmPassword"
-                formControlName="confirmPassword"
-                [class.validation-error]="
-                    displayedMessages.passwordGroup.length !== 0
-                "
-            />
-        </div>
-        <div *ngFor="let message of displayedMessages.passwordGroup">
-            {{ message }}
-        </div>
-    </div>
-
-    <div
-        formArrayName="addressArray"
-        *ngFor="let address of addressArray.controls; let i = index"
-    >
-        <div [formGroupName]="i">
-            <div
-                [class.validation-error]="
-                    displayedMessages['addressType_' + (i + 1)].length !== 0
-                "
-            >
-                <label for="{{ 'home_' + (i + 1) }}">Address Type</label>
-                <label for="{{ 'home_' + (i + 1) }}">
-                    <input
-                        type="radio"
-                        name="addressType"
-                        value="home"
-                        id="{{ 'home_' + (i + 1) }}"
-                        formControlName="addressType"
-                    />Home
-                </label>
-                <label for="{{ 'work_' + (i + 1) }}">
-                    <input
-                        type="radio"
-                        name="addressType"
-                        value="work"
-                        id="{{ 'work_' + (i + 1) }}"
-                        formControlName="addressType"
-                    />
-                    Work
-                </label>
-                <label for="{{ 'other_' + (i + 1) }}">
-                    <input
-                        type="radio"
-                        name="addressType"
-                        value="other"
-                        id="{{ 'other_' + (i + 1) }}"
-                        formControlName="addressType"
-                    />
-                    Other
-                </label>
-                <div
-                    *ngFor="
-                        let message of displayedMessages[
-                            'addressType_' + (i + 1)
-                        ]
+                <label
+                    for="email"
+                    class="field-name"
+                    [class.validation-error-label]="
+                        displayedMessages.email.length !== 0
                     "
+                    >Email</label
+                >
+                <input
+                    class="input"
+                    type="text"
+                    id="email"
+                    formControlName="email"
+                />
+
+                <div
+                    *ngFor="let message of displayedMessages.email"
+                    class="validation-error-message"
                 >
                     {{ message }}
                 </div>
             </div>
 
-            <div>
-                <label for="{{ 'street1_' + (i + 1) }}">Street 1</label>
-                <input
-                    type="text"
-                    id="{{ 'street1_' + (i + 1) }}"
-                    formControlName="street1"
-                    [class.validation-error]="
-                        displayedMessages['street1_' + (i + 1)].length !== 0
-                    "
-                />
-                {{ "street1_" + (i + 1) }}
+            <div formGroupName="passwordGroup">
                 <div
-                    *ngFor="
-                        let message of displayedMessages['street1_' + (i + 1)]
+                    class="field-wrapper"
+                    [class.validation-error-field]="
+                        displayedMessages.password.length !== 0 ||
+                        displayedMessages.passwordGroup.length !== 0
                     "
                 >
-                    {{ message }}
-                </div>
-            </div>
-
-            <div>
-                <label for="{{ 'street2_' + (i + 1) }}">Street 2</label>
-                <input
-                    type="text"
-                    id="{{ 'street2_' + (i + 1) }}"
-                    formControlName="street2"
-                />
-            </div>
-
-            <div>
-                <label for="{{ 'zip_' + (i + 1) }}">Zip Code</label>
-                <input
-                    type="text"
-                    id="{{ 'zip_' + (i + 1) }}"
-                    formControlName="zip"
-                    [class.validation-error]="
-                        displayedMessages['zip_' + (i + 1)].length !== 0
-                    "
-                />
-                <div
-                    *ngFor="let message of displayedMessages['zip_' + (i + 1)]"
-                >
-                    {{ message }}
-                </div>
-            </div>
-
-            <div>
-                <label for="{{ 'city_' + (i + 1) }}">City</label>
-                <input
-                    type="text"
-                    id="{{ 'city_' + (i + 1) }}"
-                    formControlName="city"
-                    [class.validation-error]="
-                        displayedMessages['city_' + (i + 1)].length !== 0
-                    "
-                />
-                <div
-                    *ngFor="let message of displayedMessages['city_' + (i + 1)]"
-                >
-                    {{ message }}
-                </div>
-            </div>
-
-            <div>
-                <label for="{{ 'country_' + (i + 1) }}">Country</label>
-                <div
-                    [class.validation-error]="
-                        displayedMessages['country_' + (i + 1)].length !== 0
-                    "
-                >
-                    <ng-autocomplete
-                        id="{{ 'country_' + (i + 1) }}"
-                        formControlName="country"
-                        [isLoading]="countryList.data.length === 0"
-                        [data]="countryList.data"
-                        [searchKeyword]="countryList.keyword"
-                        [itemTemplate]="itemTemplate"
-                        [notFoundTemplate]="notFoundTemplate"
+                    <label
+                        for="password"
+                        class="field-name"
+                        [class.validation-error-label]="
+                            displayedMessages.password.length !== 0 ||
+                            displayedMessages.passwordGroup.length !== 0
+                        "
+                        >Password</label
                     >
-                    </ng-autocomplete>
-
-                    <ng-template #itemTemplate let-item>
-                        <a [innerHTML]="item"></a>
-                    </ng-template>
-
-                    <ng-template #notFoundTemplate let-notFound>
-                        <div [innerHTML]="notFound"></div>
-                    </ng-template>
+                    <input
+                        class="input"
+                        type="password"
+                        id="password"
+                        formControlName="password"
+                    />
+                    <div
+                        *ngFor="let message of displayedMessages.password"
+                        class="validation-error-message"
+                    >
+                        {{ message }}
+                    </div>
                 </div>
-
                 <div
-                    *ngFor="
-                        let message of displayedMessages['country_' + (i + 1)]
+                    class="field-wrapper"
+                    [class.validation-error-field]="
+                        displayedMessages.passwordGroup.length !== 0
                     "
                 >
-                    {{ message }}
+                    <label
+                        for="confirmPassword"
+                        class="field-name"
+                        [class.validation-error-label]="
+                            displayedMessages.passwordGroup.length !== 0
+                        "
+                        >Confirm Password</label
+                    >
+                    <input
+                        class="input"
+                        type="password"
+                        id="confirmPassword"
+                        formControlName="confirmPassword"
+                    />
+                    <div
+                        *ngFor="let message of displayedMessages.passwordGroup"
+                        class="validation-error-message"
+                    >
+                        {{ message }}
+                    </div>
                 </div>
             </div>
-
-            <button
-                type="button"
-                (click)="handleArrayAdd('addressArray', addressArray)"
-                [disabled]="addressArray.valid"
-                *ngIf="i === 0"
-            >
-                add
-            </button>
-
-            <button
-                type="button"
-                (click)="handleArrayDelete('addressArray', addressArray, i)"
-                *ngIf="i !== 0"
-            >
-                delete
-            </button>
         </div>
-    </div>
+    </section>
+    <section>
+        <header><span>3</span>Addresses</header>
+        <div class="section-wrapper">
+            <div
+                formArrayName="addressArray"
+                *ngFor="let address of addressArray.controls; let i = index"
+            >
+                <div [formGroupName]="i">
+                    <header class="group-header">
+                        <h3>Address {{ i + 1 }}:</h3>
+
+                        <button
+                            class="button-add"
+                            type="button"
+                            (click)="
+                                handleArrayAdd('addressArray', addressArray)
+                            "
+                            [disabled]="!addressArray.valid"
+                            *ngIf="i === 0"
+                        >
+                            <fa-icon [icon]="faPlusCircle"></fa-icon>
+                        </button>
+                        <button
+                            class="button-remove"
+                            type="button"
+                            (click)="
+                                handleArrayDelete(
+                                    'addressArray',
+                                    addressArray,
+                                    i
+                                )
+                            "
+                            *ngIf="i !== 0"
+                        >
+                            <fa-icon [icon]="faMinusCircle"></fa-icon>
+                        </button>
+                    </header>
+
+                    <div
+                        class="field-wrapper"
+                        [class.validation-error-field]="
+                            displayedMessages['addressType_' + (i + 1)]
+                                .length !== 0
+                        "
+                    >
+                        <label
+                            for="{{ 'home_' + (i + 1) }}"
+                            class="field-name"
+                            [class.validation-error-label]="
+                                displayedMessages['addressType_' + (i + 1)]
+                                    .length !== 0
+                            "
+                            >Address Type</label
+                        >
+                        <div class="input">
+                            <label for="{{ 'home_' + (i + 1) }}">
+                                <input
+                                    type="radio"
+                                    name="addressType"
+                                    value="home"
+                                    id="{{ 'home_' + (i + 1) }}"
+                                    formControlName="addressType"
+                                />Home
+                            </label>
+                            <label for="{{ 'work_' + (i + 1) }}">
+                                <input
+                                    type="radio"
+                                    name="addressType"
+                                    value="work"
+                                    id="{{ 'work_' + (i + 1) }}"
+                                    formControlName="addressType"
+                                />
+                                Work
+                            </label>
+                            <label for="{{ 'other_' + (i + 1) }}">
+                                <input
+                                    type="radio"
+                                    name="addressType"
+                                    value="other"
+                                    id="{{ 'other_' + (i + 1) }}"
+                                    formControlName="addressType"
+                                />
+                                Other
+                            </label>
+                        </div>
+                        <div
+                            *ngFor="
+                                let message of displayedMessages[
+                                    'addressType_' + (i + 1)
+                                ]
+                            "
+                            class="validation-error-message"
+                        >
+                            {{ message }}
+                        </div>
+                    </div>
+
+                    <div
+                        class="field-wrapper"
+                        [class.validation-error-field]="
+                            displayedMessages['street1_' + (i + 1)].length !== 0
+                        "
+                    >
+                        <label
+                            for="{{ 'street1_' + (i + 1) }}"
+                            class="field-name"
+                            [class.validation-error-label]="
+                                displayedMessages['street1_' + (i + 1)]
+                                    .length !== 0
+                            "
+                            >Street 1</label
+                        >
+                        <input
+                            class="input"
+                            type="text"
+                            id="{{ 'street1_' + (i + 1) }}"
+                            formControlName="street1"
+                        />
+                        <div
+                            *ngFor="
+                                let message of displayedMessages[
+                                    'street1_' + (i + 1)
+                                ]
+                            "
+                            class="validation-error-message"
+                        >
+                            {{ message }}
+                        </div>
+                    </div>
+
+                    <div class="field-wrapper">
+                        <label
+                            for="{{ 'street2_' + (i + 1) }}"
+                            class="field-name"
+                            >Street 2</label
+                        >
+                        <input
+                            class="input"
+                            type="text"
+                            id="{{ 'street2_' + (i + 1) }}"
+                            formControlName="street2"
+                        />
+                    </div>
+
+                    <div
+                        class="field-wrapper"
+                        [class.validation-error-field]="
+                            displayedMessages['zip_' + (i + 1)].length !== 0
+                        "
+                    >
+                        <label
+                            for="{{ 'zip_' + (i + 1) }} "
+                            class="field-name"
+                            [class.validation-error-label]="
+                                displayedMessages['zip_' + (i + 1)].length !== 0
+                            "
+                            >Zip Code</label
+                        >
+                        <input
+                            class="input"
+                            type="text"
+                            id="{{ 'zip_' + (i + 1) }}"
+                            formControlName="zip"
+                        />
+                        <div
+                            *ngFor="
+                                let message of displayedMessages[
+                                    'zip_' + (i + 1)
+                                ]
+                            "
+                            class="validation-error-message"
+                        >
+                            {{ message }}
+                        </div>
+                    </div>
+
+                    <div
+                        class="field-wrapper"
+                        [class.validation-error-field]="
+                            displayedMessages['city_' + (i + 1)].length !== 0
+                        "
+                    >
+                        <label
+                            for="{{ 'city_' + (i + 1) }}"
+                            class="field-name"
+                            [class.validation-error-label]="
+                                displayedMessages['city_' + (i + 1)].length !==
+                                0
+                            "
+                            >City</label
+                        >
+                        <input
+                            class="input"
+                            type="text"
+                            id="{{ 'city_' + (i + 1) }}"
+                            formControlName="city"
+                        />
+                        <div
+                            *ngFor="
+                                let message of displayedMessages[
+                                    'city_' + (i + 1)
+                                ]
+                            "
+                            class="validation-error-message"
+                        >
+                            {{ message }}
+                        </div>
+                    </div>
+
+                    <div
+                        class="field-wrapper"
+                        [class.validation-error-field]="
+                            displayedMessages['country_' + (i + 1)].length !== 0
+                        "
+                    >
+                        <label
+                            for="{{ 'country_' + (i + 1) }}"
+                            class="field-name"
+                            [class.validation-error-label]="
+                                displayedMessages['country_' + (i + 1)]
+                                    .length !== 0
+                            "
+                            >Country</label
+                        >
+                        <div class="input-autocomplete">
+                            <ng-autocomplete
+                                id="{{ 'country_' + (i + 1) }}"
+                                formControlName="country"
+                                [isLoading]="countryList.data.length === 0"
+                                [data]="countryList.data"
+                                [searchKeyword]="countryList.keyword"
+                                [itemTemplate]="itemTemplate"
+                                [notFoundTemplate]="notFoundTemplate"
+                            >
+                            </ng-autocomplete>
+
+                            <ng-template #itemTemplate let-item>
+                                <a [innerHTML]="item"></a>
+                            </ng-template>
+
+                            <ng-template #notFoundTemplate let-notFound>
+                                <div [innerHTML]="notFound"></div>
+                            </ng-template>
+                        </div>
+
+                        <div
+                            *ngFor="
+                                let message of displayedMessages[
+                                    'country_' + (i + 1)
+                                ]
+                            "
+                            class="validation-error-message"
+                        >
+                            {{ message }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <button type="submit" [disabled]="employeeForm.invalid">submit</button>
 </form>
